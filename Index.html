@@ -6,13 +6,14 @@
     <title>Mirzapur Mandal App</title>
     
     <link rel="preconnect" href="https://script.google.com">
-    <link rel="dns-prefetch" href="https://script.google.com">
     
-    <link rel="manifest" href="manifest.json?v=36">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: #ffffff; font-family: sans-serif; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: #ffffff; font-family: sans-serif; 
+        }
         
-        /* लोडर स्टाइल */
+        /* प्रोफेशनल लोडर स्टाइल */
         #loading-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ffffff; display: flex; flex-direction: column;
@@ -27,7 +28,11 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         #loading-text { color: #004d99; font-weight: bold; font-size: 16px; letter-spacing: 0.5px; }
 
-        iframe { width: 100%; height: 100vh; border: none; display: block; opacity: 0; transition: opacity 0.5s ease; }
+        /* आईफ्रेम स्टाइल */
+        iframe { 
+            width: 100%; height: 100vh; border: none; 
+            display: block; opacity: 0; transition: opacity 0.5s ease; 
+        }
         iframe.loaded { opacity: 1; }
     </style>
 </head>
@@ -44,11 +49,6 @@
             onload="hideLoader()"></iframe>
 
     <script>
-        // सर्विस वर्कर रजिस्ट्रेशन
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js?v=36');
-        }
-
         function hideLoader() {
             const loader = document.getElementById('loading-overlay');
             const frame = document.getElementById('appFrame');
@@ -60,20 +60,13 @@
             }, 500);
         }
 
-        // टेलीग्राम या धीमे नेटवर्क के लिए बैकअप: 10 सेकंड बाद लोडर हटा दें
+        // यदि नेटवर्क धीमा है, तो 12 सेकंड बाद लोडर को हटा दें (Backup)
         setTimeout(() => {
             const loader = document.getElementById('loading-overlay');
-            if (loader.style.display !== 'none') {
-                console.log("Loading taking too long, forcing display...");
+            if (loader && loader.style.display !== 'none') {
                 hideLoader();
             }
-        }, 10000); 
-
-        window.addEventListener("message", (event) => {
-            if (event.data === "logged_out") {
-                location.reload(); 
-            }
-        }, false);
+        }, 12000); 
     </script>
 </body>
 </html>
