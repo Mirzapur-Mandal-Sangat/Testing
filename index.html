@@ -14,12 +14,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   
-  <!-- defer लगाने से अब स्क्रीन ब्लैंक नहीं रहेगी, ऐप तुरंत खुलेगा -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
   
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f7f9; margin: 0; padding: 0; touch-action: manipulation; }
     .header { background: #0088cc; color: white; padding: 12px 15px; font-weight: bold; position: sticky; top: 0; z-index: 9999; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     .header.attendance-header { background: #27ae60; }
     .header.sevadar-header { background: #e67e22; }
@@ -93,137 +92,7 @@
 </head>
 <body onload="checkAuth()">
 
-  <div id="loaderOverlay"><div class="spinner"></div><p id="loaderText">लोड हो रहा है...</p></div>
-
-  <input type="file" id="ocrNativeCamera" accept="image/*" capture="environment" style="display: none;" onchange="handleNativeCameraCapture(event)">
-  <input type="file" id="ocrNativeGallery" accept="image/*" style="display: none;" onchange="handleNativeCameraCapture(event)">
-
-  <div id="ocrCameraModal" class="ocr-modal">
-    <div class="ocr-modal-content">
-      <h3 style="color:#0088cc; margin-top:0;">📝 टेक्स्ट स्कैनर रिज़ल्ट</h3>
-      <div id="imgPreviewContainer" class="img-preview-container">
-         <img id="ocrImagePreview" class="img-preview" />
-         <div id="scannerBeam" class="scanner-beam"></div>
-      </div>
-      <div id="ocrScanningIndicator" class="hidden" style="color: #0088cc; font-weight: bold; margin: 10px 0;">
-        <div class="ocr-local-spinner"></div>
-        <span style="font-size: 14px;">🔍 टेक्स्ट स्कैन हो रहा है, कृपया प्रतीक्षा करें...</span>
-      </div>
-      <div id="ocrResultContainer" class="hidden">
-        <label style="margin: 10px 0 2px 0;">स्कैन किया गया टेक्स्ट (सुधार करें):</label>
-        <textarea id="ocrTextResult" class="ocr-preview-box"></textarea>
-        <div class="ocr-btn-group">
-          <button onclick="applyOCRText()" style="background:#0088cc; color:white;">✅ अप्लाई करें</button>
-          <button onclick="document.getElementById('ocrNativeCamera').click()" style="background:#ff9800; color:white;">🔄 फिर से लें</button>
-        </div>
-      </div>
-      <button id="cancelOcrBtn" onclick="closeOCRScanner()" style="background:#95a5a6; color:white; margin-top:15px;">रद्द करें</button>
-    </div>
-  </div>
-
-  <div id="loginChoice" class="container" style="margin-top:80px;">
-    <div class="card">
-      <h2 style="color:#0088cc; margin-bottom:30px;">Login Mirzapur Mandal</h2>
-      <button onclick="openLogin('attendance')" style="background:#27ae60; color:white; margin-bottom:15px; font-weight:bold;">🙏 SATSANG ATTENDANCE</button>
-      <button onclick="openLogin('sevadar')" style="background:#e67e22; color:white; margin-bottom:15px; font-weight:bold;">✉️ SMS / DELIVERY SEVADAR LOGIN</button>
-      <button onclick="openLogin('user')" style="background:#0088cc; color:white; font-weight:bold;">👤 USER LOGIN</button>
-      <button onclick="openLogin('admin')" style="background:#34495e; color:white; margin-top:15px; font-weight:bold;">🔑 ADMIN LOGIN</button>
-    </div>
-  </div>
-
-  <div id="loginPage" class="container hidden" style="margin-top:50px;">
-    <div class="card">
-      <h3 id="loginTitle">LOGIN</h3>
-      <input type="text" id="uMob" placeholder="Mobile Number or Email">
-      <div id="pinField">
-        <input type="password" id="uPin" placeholder="PIN">
-        <button onclick="handleLogin()" style="background:#0088cc; color:white; font-weight:bold;">VERIFY ACCESS</button>
-        <p onclick="showForgot()" style="color:#0088cc; font-size:12px; cursor:pointer; text-align:right; margin-top:5px; font-weight:bold;">Forgot PIN?</p>
-      </div>
-      <div id="otpSection" class="hidden">
-        <p style="font-size:12px; color:green; margin-bottom:5px;">OTP और नया पिन भरें</p>
-        <input type="number" id="uOTP" placeholder="Enter 4-Digit OTP">
-        <input type="password" id="newPin" placeholder="Set New PIN">
-        <button onclick="handleReset()" style="background:#28a745; color:white; font-weight:bold;">RESET PIN</button>
-      </div>
-      <button onclick="goBack()" style="background:#95a5a6; color:white; margin-top:10px;">BACK</button>
-    </div>
-  </div>
-
-  <!-- DASHBOARDS -->
-  <div id="attendanceDashboard" class="hidden">
-    <div class="header attendance-header"><span id="attDashHeader">SATSANG ATTENDANCE</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
-    <div class="container" style="text-align:center; margin-top:20px; padding-bottom: 80px;"></div>
-  </div>
-
-  <div id="sevadarDashboard" class="hidden">
-    <div class="header sevadar-header"><span id="sevadarDashHeader">SEVADAR PANEL</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
-    <div class="container" style="text-align:center; margin-top:20px; padding-bottom: 80px;"></div>
-  </div>
-
-  <div id="dashboard" class="hidden">
-    <div class="header"><span id="dashHeader">PANEL</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
-    <div class="container">
-      <div id="adminMenu" class="hidden">
-        <div class="admin-nav">
-          <button id="navRole" class="nav-btn active" onclick="switchAdminView('roles')">👥 Users Roll</button>
-          <button id="navAct" class="nav-btn" onclick="switchAdminView('activity')">📊 Activity Log <span id="logBadge" class="badge-count hidden">0</span></button>
-        </div>
-        <div id="reportFilters" class="filter-group hidden">
-           <select id="userFilter" class="user-select" onchange="fetchFilteredReport(lastPeriod)"></select>
-           <div class="chips-container">
-             <div id="chipDaily" class="filter-chip active" onclick="fetchFilteredReport('daily')">DAILY</div>
-             <div id="chipMonthly" class="filter-chip" onclick="fetchFilteredReport('monthly')">MONTHLY</div>
-             <div id="chipLifetime" class="filter-chip">
-               <span id="lifetimeBtnText">LIFETIME</span>
-               <select id="monthFilter" class="invisible-select" onchange="handleMonthSelection(event)">
-                 <option value="lifetime">LIFETIME</option>
-                 <option value="0">JANUARY</option><option value="1">FEBRUARY</option><option value="2">MARCH</option>
-                 <option value="3">APRIL</option><option value="4">MAY</option><option value="5">JUNE</option>
-                 <option value="6">JULY</option><option value="7">AUGUST</option><option value="8">SEPTEMBER</option>
-                 <option value="9">OCTOBER</option><option value="10">NOVEMBER</option><option value="11">DECEMBER</option>
-               </select>
-             </div>
-           </div>
-        </div>
-      </div>
-      <div id="distTabs">
-        <button class="tab-btn" id="tab0" onclick="switchDistrict(0)">Bhadohi</button>
-        <button class="tab-btn" id="tab1" onclick="switchDistrict(1)">Mirzapur</button>
-        <button class="tab-btn" id="tab2" onclick="switchDistrict(2)">Sonbhadra</button>
-      </div>
-      <div id="tehsilView" class="hidden"></div>
-      <div id="searchWrapper" class="hidden"><input type="text" id="searchValue" placeholder="मोबाइल या फॉर्म नंबर" oninput="handleSearchInput()"></div>
-      
-      <div id="genderFilters" class="filter-stats-container hidden">
-        <div id="statAll" class="stat-btn active" onclick="filterGender('all')">कुल: <span id="countAll">0</span></div>
-        <div id="statMale" class="stat-btn btn-m" onclick="filterGender('male')">पुरूष: <span id="countMale">0</span></div>
-        <div id="statFemale" class="stat-btn btn-f" onclick="filterGender('female')">महिलायें: <span id="countFemale">0</span></div>
-      </div>
-
-      <div id="recordCounter" class="record-capsule hidden">
-        <span>कुल रिकॉर्ड: <span id="totalCountDisplay">0</span></span>
-        <span id="currentLocDisplay" class="location-badge hidden"></span>
-      </div>
-      <div id="activityCounter" class="activity-count-text hidden">कुल एक्टिविटी: <span id="actCountDisplay">0</span></div>
-
-      <div id="mainContent" class="hidden"><div id="dataList"></div></div>
-    </div>
-    <button id="addFab" class="fab hidden" onclick="openForm()">+</button>
-  </div>
-
-  <div id="formPage" class="container hidden">
-    <div class="card">
-      <h3 id="formTitle">डेटा एंट्री</h3>
-      <div id="formFields" style="text-align:left; overflow-y:auto; max-height:75vh; padding-bottom:20px;"></div>
-      <button onclick="saveData()" style="background:#28a745; color:white; font-weight:bold;">✅ सुरक्षित करें</button>
-      <button onclick="closeForm()" style="background:#95a5a6; color:white;">रद्द करें</button>
-    </div>
-  </div>
-
-  <!-- 🟢 सुरक्षित और अन-मिनिफाइड (Un-minified) जावास्क्रिप्ट -->
   <script>
-    // 1. Google API Proxy Setup
     const API_URL = "https://script.google.com/macros/s/AKfycbyzVAkFgZYtjW_CWxysdovKBpZizvg998DYog-0EJXN6uvU_1_RDmvYUcPmVuEphPk4/exec";
     
     window.google = {
@@ -247,19 +116,34 @@
                             fetch(API_URL, {
                                 method: 'POST',
                                 body: JSON.stringify({ action: prop, args: args }),
-                                headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                redirect: 'follow'
                             })
-                            .then(res => res.json())
-                            .then(data => {
+                            .then(res => res.text()) // JSON की जगह पहले Text पढ़ें
+                            .then(text => {
+                                let data;
+                                try {
+                                    data = JSON.parse(text);
+                                } catch(e) {
+                                    throw new Error("सर्वर से गलत जवाब मिला (चेक करें क्या Script 'Anyone' पर पब्लिश है?): " + text.substring(0, 80));
+                                }
+                                
                                 if (data.error && currentFailure) { 
                                     currentFailure(new Error(data.error)); 
+                                } else if (data.error) {
+                                    throw new Error(data.error);
                                 } else if (currentSuccess) { 
                                     currentSuccess(data.result); 
                                 }
                             })
                             .catch(err => {
-                                if (currentFailure) currentFailure(err); 
-                                else console.error("API Error:", err);
+                                if (currentFailure) {
+                                    currentFailure(err); 
+                                } else {
+                                    console.error("API Error:", err);
+                                    if(typeof hideP === 'function') hideP(); // 🛑 लोडर को रोकना बहुत ज़रूरी है
+                                    alert("कनेक्शन एरर: " + err.message);
+                                }
                             });
                         }
                     }
@@ -268,7 +152,6 @@
         }
     };
 
-    // 2. Global Variables
     let curDist = -1;
     let curTeh = "";
     let activeRole = "user";
@@ -277,7 +160,6 @@
     let searchTimer;
     let currentBlock = "";
 
-    // 3. UI Helpers
     function showP(t) { 
         document.getElementById('loaderOverlay').style.pointerEvents = 'auto'; 
         document.getElementById('loaderText').innerText = t || "लोड हो रहा है..."; 
@@ -302,7 +184,6 @@
         return localStorage.getItem('uP'); 
     }
 
-    // 4. Main Authentication & Init
     function checkAuth() { 
         const mob = localStorage.getItem('uM'); 
         if (!mob) return;
@@ -421,7 +302,6 @@
         hideP();
     }
 
-    // 5. Login Form Actions
     function openLogin(m) { 
         localStorage.setItem('reqMode', m); 
         document.getElementById('pinField').classList.remove('hidden');
@@ -473,7 +353,6 @@
         }).processLogin(m, p, dId, reqMode);
     }
 
-    // 6. Application Logic (Admin & Views)
     function switchAdminView(view) {
         currentAdminView = view;
         document.getElementById('navRole').classList.toggle('active', view === 'roles');
@@ -771,26 +650,34 @@
         const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
         let actionText = action === 'unblock' ? "Unblock" : "Block";
 
-        Swal.fire({
-            title: 'Confirm ' + actionText,
-            text: "क्या आप इस यूज़र को " + actionText + " करना चाहते हैं?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: action === 'unblock' ? '#28a745' : '#343a40'
-        }).then((res) => {
-            if(res.isConfirmed) {
-                showP(actionText + " किया जा रहा है...");
-                google.script.run.withSuccessHandler(response => {
-                    hideP();
-                    if(response.success) {
-                        Swal.fire('सफल', response.msg, 'success');
-                        refreshAdminUsers(); 
-                    } else {
-                        Swal.fire('त्रुटि', response.msg, 'error');
-                    }
-                }).toggleBlockUser(targetMob, action, mob, pin, dId);
-            }
-        });
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Confirm ' + actionText,
+                text: "क्या आप इस यूज़र को " + actionText + " करना चाहते हैं?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'unblock' ? '#28a745' : '#343a40'
+            }).then((res) => {
+                if(res.isConfirmed) proceedToggleBlock();
+            });
+        } else {
+            if(confirm("क्या आप इस यूज़र को " + actionText + " करना चाहते हैं?")) proceedToggleBlock();
+        }
+
+        function proceedToggleBlock() {
+            showP(actionText + " किया जा रहा है...");
+            google.script.run.withSuccessHandler(response => {
+                hideP();
+                if(response.success) {
+                    if(typeof Swal !== 'undefined') Swal.fire('सफल', response.msg, 'success');
+                    else alert('सफल: ' + response.msg);
+                    refreshAdminUsers(); 
+                } else {
+                    if(typeof Swal !== 'undefined') Swal.fire('त्रुटि', response.msg, 'error');
+                    else alert('त्रुटि: ' + response.msg);
+                }
+            }).toggleBlockUser(targetMob, action, mob, pin, dId);
+        }
     }
     
     function refreshTehsilData(q = "") { 
@@ -985,7 +872,6 @@
         }).verifyAndReset(m, otp, pin);
     }
 
-    // 7. Text Scanner (OCR)
     function handleNativeCameraCapture(event) {
         const file = event.target.files[0]; 
         if (!file) return; 
@@ -1096,12 +982,21 @@
         closeOCRScanner(); 
     }
 
-    // 8. Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW setup failed:', err));
         });
     }
   </script>
+  
+  <div id="loginChoice" class="container" style="margin-top:80px;">
+    <div class="card">
+      <h2 style="color:#0088cc; margin-bottom:30px;">Login Mirzapur Mandal</h2>
+      <button onclick="openLogin('attendance')" style="background:#27ae60; color:white; margin-bottom:15px; font-weight:bold;">🙏 SATSANG ATTENDANCE</button>
+      <button onclick="openLogin('sevadar')" style="background:#e67e22; color:white; margin-bottom:15px; font-weight:bold;">✉️ SMS / DELIVERY SEVADAR LOGIN</button>
+      <button onclick="openLogin('user')" style="background:#0088cc; color:white; font-weight:bold;">👤 USER LOGIN</button>
+      <button onclick="openLogin('admin')" style="background:#34495e; color:white; margin-top:15px; font-weight:bold;">🔑 ADMIN LOGIN</button>
+    </div>
+  </div>
 </body>
 </html>
