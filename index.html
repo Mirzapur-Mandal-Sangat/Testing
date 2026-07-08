@@ -177,6 +177,1019 @@
     </div>
   </div>
 
+  <div id="loginChoice" class="container" style="margin-top:80px;">
+    <div class="card">
+      <h2 style="color:#0088cc; margin-bottom:30px;">Login Mirzapur Mandal</h2>
+      <button onclick="openLogin('attendance')" style="background:#27ae60; color:white; margin-bottom:15px; font-weight:bold;">🙏 SATSANG ATTENDANCE</button>
+      <button onclick="openLogin('sevadar')" style="background:#e67e22; color:white; margin-bottom:15px; font-weight:bold;">✉️ SMS / DELIVERY SEVADAR LOGIN</button>
+      <button onclick="openLogin('user')" style="background:#0088cc; color:white; font-weight:bold;">👤 USER LOGIN</button>
+      <button onclick="openLogin('admin')" style="background:#34495e; color:white; margin-top:15px; font-weight:bold;">🔑 ADMIN LOGIN</button>
+    </div>
+  </div>
+
+  <div id="loginPage" class="container hidden" style="margin-top:50px;">
+    <div class="card">
+      <h3 id="loginTitle">LOGIN</h3>
+      <input type="text" id="uMob" placeholder="Mobile Number or Email">
+      <div id="pinField">
+        <input type="password" id="uPin" placeholder="PIN">
+        <button onclick="handleLogin()" style="background:#0088cc; color:white; font-weight:bold;">VERIFY ACCESS</button>
+        <p onclick="showForgot()" style="color:#0088cc; font-size:12px; cursor:pointer; text-align:right; margin-top:5px; font-weight:bold;">Forgot PIN?</p>
+      </div>
+      <div id="otpSection" class="hidden">
+        <p style="font-size:12px; color:green; margin-bottom:5px;">OTP और नया पिन भरें</p>
+        <input type="number" id="uOTP" placeholder="Enter 4-Digit OTP">
+        <input type="password" id="newPin" placeholder="Set New PIN">
+        <button onclick="handleReset()" style="background:#28a745; color:white; font-weight:bold;">RESET PIN</button>
+      </div>
+      <button onclick="goBack()" style="background:#95a5a6; color:white; margin-top:10px;">BACK</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARDS -->
+  <div id="attendanceDashboard" class="hidden">
+    <div class="header attendance-header"><span id="attDashHeader">SATSANG ATTENDANCE</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
+    <div class="container" style="text-align:center; margin-top:20px; padding-bottom: 80px;"></div>
+  </div>
+
+  <div id="sevadarDashboard" class="hidden">
+    <div class="header sevadar-header"><span id="sevadarDashHeader">SEVADAR PANEL</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
+    <div class="container" style="text-align:center; margin-top:20px; padding-bottom: 80px;"></div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <div class="header"><span id="dashHeader">PANEL</span><i class="fa-solid fa-power-off logout-icon" onclick="logout()"></i></div>
+    <div class="container">
+      <div id="adminMenu" class="hidden">
+        <div class="admin-nav">
+          <button id="navRole" class="nav-btn active" onclick="switchAdminView('roles')">👥 Users Roll</button>
+          <button id="navAct" class="nav-btn" onclick="switchAdminView('activity')">📊 Activity Log <span id="logBadge" class="badge-count hidden">0</span></button>
+        </div>
+        <div id="reportFilters" class="filter-group hidden">
+           <select id="userFilter" class="user-select" onchange="fetchFilteredReport(lastPeriod)"></select>
+           <div class="chips-container">
+             <div id="chipDaily" class="filter-chip active" onclick="fetchFilteredReport('daily')">DAILY</div>
+             <div id="chipMonthly" class="filter-chip" onclick="fetchFilteredReport('monthly')">MONTHLY</div>
+             <div id="chipLifetime" class="filter-chip">
+               <span id="lifetimeBtnText">LIFETIME</span>
+               <select id="monthFilter" class="invisible-select" onchange="handleMonthSelection(event)">
+                 <option value="lifetime">LIFETIME</option>
+                 <option value="0">JANUARY</option><option value="1">FEBRUARY</option><option value="2">MARCH</option>
+                 <option value="3">APRIL</option><option value="4">MAY</option><option value="5">JUNE</option>
+                 <option value="6">JULY</option><option value="7">AUGUST</option><option value="8">SEPTEMBER</option>
+                 <option value="9">OCTOBER</option><option value="10">NOVEMBER</option><option value="11">DECEMBER</option>
+               </select>
+             </div>
+           </div>
+        </div>
+      </div>
+      <div id="distTabs">
+        <button class="tab-btn" id="tab0" onclick="switchDistrict(0)">Bhadohi</button>
+        <button class="tab-btn" id="tab1" onclick="switchDistrict(1)">Mirzapur</button>
+        <button class="tab-btn" id="tab2" onclick="switchDistrict(2)">Sonbhadra</button>
+      </div>
+      <div id="tehsilView" class="hidden"></div>
+      <div id="searchWrapper" class="hidden"><input type="text" id="searchValue" placeholder="मोबाइल या फॉर्म नंबर" oninput="handleSearchInput()"></div>
+      
+      <div id="genderFilters" class="filter-stats-container hidden">
+        <div id="statAll" class="stat-btn active" onclick="filterGender('all')">कुल: <span id="countAll">0</span></div>
+        <div id="statMale" class="stat-btn btn-m" onclick="filterGender('male')">पुरूष: <span id="countMale">0</span></div>
+        <div id="statFemale" class="stat-btn btn-f" onclick="filterGender('female')">महिलायें: <span id="countFemale">0</span></div>
+      </div>
+
+      <div id="recordCounter" class="record-capsule hidden">
+        <span>कुल रिकॉर्ड: <span id="totalCountDisplay">0</span></span>
+        <span id="currentLocDisplay" class="location-badge hidden"></span>
+      </div>
+      <div id="activityCounter" class="activity-count-text hidden">कुल एक्टिविटी: <span id="actCountDisplay">0</span></div>
+
+      <div id="mainContent" class="hidden"><div id="dataList"></div></div>
+    </div>
+    <button id="addFab" class="fab hidden" onclick="openForm()">+</button>
+  </div>
+
+  <div id="formPage" class="container hidden">
+    <div class="card">
+      <h3 id="formTitle">डेटा एंट्री</h3>
+      <div id="formFields" style="text-align:left; overflow-y:auto; max-height:75vh; padding-bottom:20px;"></div>
+      <button onclick="saveData()" style="background:#28a745; color:white; font-weight:bold;">✅ सुरक्षित करें</button>
+      <button onclick="closeForm()" style="background:#95a5a6; color:white;">रद्द करें</button>
+    </div>
+  </div>
+
+  <script>
+    let curDist = -1;
+    let curTeh = "";
+    let activeRole = "user";
+    let currentAdminView = "roles";
+    let lastPeriod = "daily";
+    let searchTimer;
+    let currentBlock = "";
+
+    function showP(t) { 
+        document.getElementById('loaderOverlay').style.pointerEvents = 'auto'; 
+        document.getElementById('loaderText').innerText = t || "लोड हो रहा है..."; 
+        document.getElementById('loaderOverlay').style.display = 'flex'; 
+    }
+
+    function hideP() { 
+        document.getElementById('loaderOverlay').style.display = 'none'; 
+        document.getElementById('loaderOverlay').style.pointerEvents = 'none'; 
+    }
+
+    function getDevID() { 
+        let id = localStorage.getItem('device_id'); 
+        if (!id) { 
+            id = 'DEV-' + Math.random().toString(36).substr(2, 9).toUpperCase(); 
+            localStorage.setItem('device_id', id); 
+        } 
+        return id; 
+    }
+    
+    function getStoredPin() { 
+        return localStorage.getItem('uP'); 
+    }
+
+    function checkAuth() { 
+        const mob = localStorage.getItem('uM'); 
+        if (!mob) return;
+        
+        const pin = getStoredPin(); 
+        showP("लोड हो रहा है...");
+        
+        google.script.run.withSuccessHandler(res => {
+            if(res && res.success) {
+                localStorage.setItem('uN', res.name);
+                localStorage.setItem('uDists', JSON.stringify(res.dists)); 
+                localStorage.setItem('uTehsils', JSON.stringify(res.allowedTehsils));
+                localStorage.setItem('activeRole', res.finalRole); 
+                fastInit();
+            } else { 
+                hideP(); 
+                logout(); 
+            }
+        }).validateAndFetch(mob, getDevID(), localStorage.getItem('activeRole') || 'user', pin, localStorage.getItem('reqMode')); 
+    }
+
+    function fastInit() {
+        activeRole = localStorage.getItem('activeRole');
+        let reqMode = localStorage.getItem('reqMode');
+        let uName = localStorage.getItem('uN');
+        
+        document.getElementById('loginChoice').classList.add('hidden');
+        document.getElementById('loginPage').classList.add('hidden');
+        
+        if (reqMode === 'attendance') {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('sevadarDashboard').classList.add('hidden');
+            document.getElementById('attendanceDashboard').classList.remove('hidden');
+            document.getElementById('attDashHeader').innerText = "अटेंडेंस: " + uName;
+            
+            showP("पोर्टल लोड हो रहा है...");
+            google.script.run.withSuccessHandler(ui => {
+                if(ui === "Security Violation") return logout();
+                document.querySelector('#attendanceDashboard .container').innerHTML = ui;
+                hideP();
+            }).getSatsangUI();
+
+            startHeartbeat();
+            return;
+        }
+
+        if (reqMode === 'sevadar') {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('attendanceDashboard').classList.add('hidden');
+            document.getElementById('sevadarDashboard').classList.remove('hidden');
+            document.getElementById('sevadarDashHeader').innerText = "सेवादार पैनल: " + uName;
+            
+            showP("सेवादार पोर्टल लोड हो रहा है...");
+            google.script.run.withSuccessHandler(ui => {
+                if(ui === "Security Violation") return logout();
+                document.querySelector('#sevadarDashboard .container').innerHTML = ui;
+                hideP();
+            }).getPustakSevaUI(localStorage.getItem('uM'), getStoredPin(), getDevID());
+
+            startHeartbeat();
+            return;
+        }
+
+        document.getElementById('attendanceDashboard').classList.add('hidden');
+        document.getElementById('sevadarDashboard').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        
+        if(activeRole === 'admin' || activeRole === 'developer') {
+            document.getElementById('dashHeader').innerText = "ADMIN: " + uName;
+            document.getElementById('adminMenu').classList.remove('hidden'); 
+            switchAdminView('roles'); 
+        } else {
+            document.getElementById('dashHeader').innerText = "यूजर: " + uName;
+            document.getElementById('adminMenu').classList.add('hidden'); 
+        }
+
+        let allowed = JSON.parse(localStorage.getItem('uDists') || '[]');
+        [0, 1, 2].forEach(idx => {
+            let tab = document.getElementById('tab' + idx);
+            tab.style.display = (allowed.indexOf(idx) > -1) ? 'inline-block' : 'none';
+        });
+        
+        if (allowed.length > 0) {
+            switchDistrict(allowed[0]);
+        } else {
+            hideP();
+        }
+
+        startHeartbeat();
+    }
+
+    function startHeartbeat() {
+        function sendPing() {
+            const mob = localStorage.getItem('uM');
+            const pin = getStoredPin();
+            const dId = getDevID();
+            if (document.visibilityState === 'visible' && mob && pin) {
+                google.script.run.withSuccessHandler(res => {
+                    if(res === "Security Violation") logout();
+                }).updateHeartbeat(mob, pin, dId);
+            }
+        }
+        sendPing(); 
+        setInterval(sendPing, 300000); 
+    }
+
+    function logout() { 
+        showP("सुरक्षित लॉगआउट..."); 
+        localStorage.clear();
+        document.getElementById('dashboard').classList.add('hidden');
+        document.getElementById('attendanceDashboard').classList.add('hidden');
+        document.getElementById('sevadarDashboard').classList.add('hidden');
+        document.getElementById('dataList').innerHTML = "";
+        document.getElementById('tehsilView').innerHTML = "";
+        document.getElementById('loginChoice').classList.remove('hidden');
+        hideP();
+    }
+
+    function openLogin(m) { 
+        localStorage.setItem('reqMode', m); 
+        document.getElementById('pinField').classList.remove('hidden');
+        document.getElementById('otpSection').classList.add('hidden');
+        document.getElementById('loginChoice').classList.add('hidden'); 
+        document.getElementById('loginPage').classList.remove('hidden'); 
+        
+        let title = "USER LOGIN";
+        if (m === 'admin') title = "ADMIN LOGIN";
+        if (m === 'attendance') title = "ATTENDANCE LOGIN";
+        if (m === 'sevadar') title = "SEVADAR LOGIN"; 
+        
+        document.getElementById('loginTitle').innerText = title; 
+    }
+
+    function goBack() { 
+        document.getElementById('loginChoice').classList.remove('hidden'); 
+        document.getElementById('loginPage').classList.add('hidden'); 
+    }
+
+    function handleLogin() {
+        const m = document.getElementById('uMob').value;
+        const rawP = document.getElementById('uPin').value;
+        const reqMode = localStorage.getItem('reqMode');
+        const dId = getDevID();
+        
+        if(!m || !rawP) {
+            alert('नोटिस: मोबाइल और पिन दोनों भरें!'); 
+            return;
+        }
+        
+        const p = btoa(rawP);
+        showP("लॉगिन हो रहा है...");
+        
+        google.script.run.withSuccessHandler(res => {
+            if(res && res.success) {
+                localStorage.setItem('uM', m); 
+                localStorage.setItem('uP', p); 
+                localStorage.setItem('uN', res.name); 
+                localStorage.setItem('activeRole', res.finalRole); 
+                localStorage.setItem('uDists', JSON.stringify(res.dists)); 
+                localStorage.setItem('uTehsils', JSON.stringify(res.allowedTehsils));
+                fastInit();
+            } else { 
+                hideP(); 
+                if(typeof Swal !== 'undefined') Swal.fire('लॉगिन असफल', res.msg, 'error'); 
+                else alert('लॉगिन असफल: ' + res.msg);
+            }
+        }).processLogin(m, p, dId, reqMode);
+    }
+
+    function switchAdminView(view) {
+        currentAdminView = view;
+        document.getElementById('navRole').classList.toggle('active', view === 'roles');
+        document.getElementById('navAct').classList.toggle('active', view === 'activity');
+        document.getElementById('genderFilters').classList.add('hidden');
+        document.getElementById('recordCounter').classList.add('hidden');
+        document.getElementById('activityCounter').classList.add('hidden');
+        
+        if(view === 'roles') {
+            document.getElementById('reportFilters').classList.add('hidden');
+            document.getElementById('addFab').classList.remove('hidden');
+            refreshAdminUsers();
+        } else {
+            document.getElementById('reportFilters').classList.remove('hidden');
+            document.getElementById('addFab').classList.add('hidden');
+            loadUserDropdown();
+        }
+    }
+
+    function loadUserDropdown() {
+        showP("लोड हो रहा है...");
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        google.script.run.withSuccessHandler(names => {
+            if(names === "Security Violation" || names.toString().includes("Admins Only")) return logout();
+            let sel = document.getElementById('userFilter');
+            let h = '<option value="All Users">All Users</option>';
+            names.forEach(n => { h += '<option value="'+n+'">'+n+'</option>'; });
+            sel.innerHTML = h;
+            fetchFilteredReport(lastPeriod); 
+        }).getAllUserNames(curDist, mob, pin, dId);
+    }
+
+    function handleMonthSelection(event) {
+        let val = event.target.value;
+        if(val === "lifetime") { 
+            document.getElementById('lifetimeBtnText').innerText = "LIFETIME"; 
+            fetchFilteredReport('lifetime'); 
+        } else { 
+            let months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"]; 
+            document.getElementById('lifetimeBtnText').innerText = months[val]; 
+            fetchFilteredReport('month_' + val); 
+        }
+    }
+
+    function fetchFilteredReport(period) {
+        lastPeriod = period; 
+        let user = document.getElementById('userFilter').value || "All Users";
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        showP("लोड हो रहा है...");
+        
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        if(period === 'daily') document.getElementById('chipDaily').classList.add('active');
+        else if(period === 'monthly') document.getElementById('chipMonthly').classList.add('active');
+        else document.getElementById('chipLifetime').classList.add('active');
+        
+        google.script.run.withSuccessHandler(res => { 
+            if(res === "Security Violation" || (res.html && res.html.includes("Admins Only"))) return logout();
+            document.getElementById('dataList').innerHTML = res.html;
+            
+            const actCounter = document.getElementById('activityCounter');
+            const actDisplay = document.getElementById('actCountDisplay');
+            if(res.count > 0 && currentAdminView === 'activity') {
+                actCounter.classList.remove('hidden');
+                actDisplay.innerText = res.count;
+            } else {
+                actCounter.classList.add('hidden');
+            }
+
+            const badge = document.getElementById('logBadge');
+            if(res.count > 0) {
+                badge.innerText = res.count;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+            hideP(); 
+        }).fetchActivityReport(curDist, period, user, mob, pin, dId);
+    }
+
+    function filterGender(type) {
+        showP("फिल्टर किया जा रहा है...");
+        setTimeout(() => {
+            const boxes = document.querySelectorAll('#dataList .res-box');
+            document.querySelectorAll('.stat-btn').forEach(b => b.classList.remove('active'));
+            
+            if(type === 'male') document.getElementById('statMale').classList.add('active');
+            else if(type === 'female') document.getElementById('statFemale').classList.add('active');
+            else document.getElementById('statAll').classList.add('active');
+
+            boxes.forEach(box => {
+                const relText = (box.getAttribute('data-rel') || "").toUpperCase();
+                if (type === 'male') {
+                    box.style.display = (relText === 'S/O') ? 'block' : 'none';
+                } else if (type === 'female') {
+                    box.style.display = (relText === 'W/O' || relText === 'D/O') ? 'block' : 'none';
+                } else {
+                    box.style.display = 'block';
+                }
+            });
+            updateCounts(); 
+            hideP(); 
+        }, 300);
+    }
+
+    function updateCounts() {
+        const boxes = document.querySelectorAll('#dataList .res-box');
+        let m = 0, f = 0, visibleCount = 0;
+        
+        boxes.forEach(box => {
+            const rel = (box.getAttribute('data-rel') || "").toUpperCase();
+            if (rel === 'S/O') m++;
+            else if (rel === 'W/O' || rel === 'D/O') f++;
+            if (box.style.display !== 'none') { visibleCount++; }
+        });
+        
+        document.getElementById('countAll').innerText = boxes.length;
+        document.getElementById('countMale').innerText = m;
+        document.getElementById('countFemale').innerText = f;
+        
+        const capsule = document.getElementById('recordCounter');
+        const displaySpan = document.getElementById('totalCountDisplay');
+        const locBadge = document.getElementById('currentLocDisplay');
+
+        if (boxes.length > 0 && currentAdminView !== 'activity') {
+            capsule.classList.remove('hidden');
+            displaySpan.innerText = visibleCount;
+            
+            if(currentBlock) {
+               locBadge.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i> Block: ' + currentBlock.split(' (')[0].trim();
+               locBadge.classList.remove('hidden');
+            } else if(curTeh) {
+               locBadge.innerHTML = '<i class="fa-solid fa-map-location-dot"></i> Tehsil: ' + curTeh;
+               locBadge.classList.remove('hidden');
+            } else {
+               locBadge.classList.add('hidden');
+            }
+        } else {
+            capsule.classList.add('hidden');
+            locBadge.classList.add('hidden');
+        }
+    }
+
+    function switchDistrict(idx) {
+        document.getElementById('searchValue').value = ""; 
+        document.getElementById('genderFilters').classList.add('hidden');
+        document.getElementById('recordCounter').classList.add('hidden');
+        document.getElementById('activityCounter').classList.add('hidden');
+        
+        showP("लोड हो रहा है..."); 
+        curDist = idx; 
+        curTeh = ""; 
+        currentBlock = ""; 
+        document.getElementById('dataList').innerHTML = "";
+        
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+        document.getElementById('addFab').classList.add('hidden');
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+
+        if(activeRole === 'admin' || activeRole === 'developer') {
+            document.getElementById('tehsilView').classList.add('hidden');
+            document.getElementById('searchWrapper').classList.add('hidden');
+            document.getElementById('mainContent').classList.remove('hidden');
+            document.getElementById('addFab').classList.remove('hidden');
+            switchAdminView(currentAdminView);
+        } else {
+            let utMap = JSON.parse(localStorage.getItem('uTehsils') || '{}');
+            let myAccess = utMap[idx] || [];
+            let blockAccesses = myAccess.filter(a => a.startsWith("B - "));
+
+            if(blockAccesses.length > 0) {
+                document.getElementById('searchWrapper').classList.add('hidden');
+                let htmlBtns = "<h4>ब्लॉक चुनें:</h4>";
+                let blocksMap = { 
+                    "Sadar":["City","Pahadi","Chhanbey","Majhawan","Kon"], 
+                    "Chunar":["Narayanpur","Jamalpur","Sikhad","Rajgarh"], 
+                    "Lalganj":["Lalganj","Haliya"], 
+                    "Marihan":["Rajgarh","Patehara"], 
+                    "Gyanpur":["Gyanpur","Deegh","Abholi"], 
+                    "Aurai":["Aurai","Bhadohi"], 
+                    "Bhadohi":["Bhadohi","Suriyawan","Abholi"], 
+                    "Ghorawal":["Ghorawal","Karma"], 
+                    "Obra":["Chopan","Kone"], 
+                    "Duddhi":["Duddhi","Myorpur","Babhani"], 
+                    "Robertsganj":["Robertsganj","Chatra","Nagwa"] 
+                };
+                
+                blockAccesses.forEach(accStr => {
+                    let bRaw = accStr.replace("B - ", "").trim();
+                    let matchingTehsils = [];
+                    for (let t in blocksMap) { 
+                        if (blocksMap[t].some(b => b.toLowerCase() === bRaw.toLowerCase())) matchingTehsils.push(t); 
+                    }
+                    matchingTehsils.forEach(tName => {
+                        let displayLabel = bRaw + " (" + tName + ")";
+                        htmlBtns += '<button onclick="openBlockDirectly('+idx+', \''+displayLabel+'\')" style="background:#fff; border:2px solid #28a745; text-align:left; padding:15px; margin-bottom:8px; border-radius:12px; width:100%; font-weight:bold; color:#333;"><i class="fa-solid fa-location-dot" style="margin-right:8px; color:#28a745;"></i> '+displayLabel+'</button>';
+                    });
+                });
+                document.getElementById('tehsilView').innerHTML = htmlBtns; 
+                document.getElementById('tehsilView').classList.remove('hidden');
+                document.getElementById('mainContent').classList.add('hidden');
+                hideP();
+            } else {
+                document.getElementById('searchWrapper').classList.add('hidden');
+                google.script.run.withSuccessHandler(ts => {
+                    if(ts === "Security Violation") return logout();
+                    hideP();
+                    let h = "<h4>तहसील चुनें:</h4>";
+                    ts.forEach(t => { 
+                        let hasT = myAccess.includes("T - " + t) || myAccess.includes(t);
+                        if(myAccess.includes("All") || myAccess.includes("District") || hasT) {
+                            h += '<button onclick="openTehsil(\''+t+'\')" style="background:#fff; border:1px solid #ddd; text-align:left; padding:15px; margin-bottom:5px; border-radius:10px; width:100%;">'+t+'</button>';
+                        }
+                    });
+                    document.getElementById('tehsilView').innerHTML = h; 
+                    document.getElementById('tehsilView').classList.remove('hidden');
+                    document.getElementById('mainContent').classList.add('hidden');
+                }).getTehsilNames(idx, mob, pin, dId);
+            }
+        }
+    }
+
+    function openBlockDirectly(di, bFull) {
+        showP("लोड हो रहा है...");
+        currentBlock = bFull;
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        
+        document.getElementById('tehsilView').classList.add('hidden');
+        document.getElementById('searchWrapper').classList.remove('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+        document.getElementById('genderFilters').classList.remove('hidden'); 
+        document.getElementById('addFab').classList.remove('hidden'); 
+        
+        google.script.run.withSuccessHandler(h => { 
+            if(h === "Security Violation" || h.includes("Unauthorized Area")) return logout();
+            document.getElementById('dataList').innerHTML = h;
+            updateCounts();
+            hideP(); 
+        }).fetchBlockData(di, bFull, "", mob, pin, dId);
+    }
+
+    function openTehsil(t) { 
+        curTeh = t; 
+        showP("लोड हो रहा है...");
+        document.getElementById('tehsilView').classList.add('hidden');
+        document.getElementById('searchWrapper').classList.remove('hidden'); 
+        document.getElementById('mainContent').classList.remove('hidden'); 
+        document.getElementById('genderFilters').classList.remove('hidden'); 
+        document.getElementById('addFab').classList.remove('hidden'); 
+        refreshTehsilData(); 
+    }
+
+    function handleSearchInput() { 
+        const v = document.getElementById('searchValue').value;
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        clearTimeout(searchTimer); 
+        
+        searchTimer = setTimeout(() => { 
+            if(v.trim().length === 0) {
+                if(currentBlock) openBlockDirectly(curDist, currentBlock);
+                else refreshTehsilData();
+                return;
+            }
+            showP("खोज की जा रही है...");
+            
+            if(currentBlock) {
+                google.script.run.withSuccessHandler(h => { 
+                    if(h === "Security Violation" || h.includes("Unauthorized Area")) return logout();
+                    document.getElementById('dataList').innerHTML = h;
+                    updateCounts();
+                    hideP(); 
+                }).fetchBlockData(curDist, currentBlock, v, mob, pin, dId);
+            } else {
+                google.script.run.withSuccessHandler(h => { 
+                    if(h === "Security Violation" || h.includes("Unauthorized Area")) return logout();
+                    document.getElementById('dataList').innerHTML = h;
+                    updateCounts();
+                    hideP(); 
+                }).fetchTehsilData(curDist, curTeh, v, mob, pin, dId);
+            }
+        }, 500); 
+    }
+
+    function refreshAdminUsers() { 
+        showP("लोड हो रहा है...");
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        google.script.run.withSuccessHandler(h => { 
+            if(h === "Security Violation" || h.includes("Admins Only")) return logout();
+            document.getElementById('dataList').innerHTML = h;
+            updateCounts(); 
+            hideP(); 
+        }).fetchAdminUsers(curDist, mob, pin, dId); 
+    }
+
+    function toggleBlockStatus(targetMob, action) {
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        let actionText = action === 'unblock' ? "Unblock" : "Block";
+
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({
+                title: 'Confirm ' + actionText,
+                text: "क्या आप इस यूज़र को " + actionText + " करना चाहते हैं?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: action === 'unblock' ? '#28a745' : '#343a40'
+            }).then((res) => {
+                if(res.isConfirmed) proceedToggleBlock();
+            });
+        } else {
+            if(confirm("क्या आप इस यूज़र को " + actionText + " करना चाहते हैं?")) proceedToggleBlock();
+        }
+
+        function proceedToggleBlock() {
+            showP(actionText + " किया जा रहा है...");
+            google.script.run.withSuccessHandler(response => {
+                hideP();
+                if(response.success) {
+                    if(typeof Swal !== 'undefined') Swal.fire('सफल', response.msg, 'success');
+                    else alert('सफल: ' + response.msg);
+                    refreshAdminUsers(); 
+                } else {
+                    if(typeof Swal !== 'undefined') Swal.fire('त्रुटि', response.msg, 'error');
+                    else alert('त्रुटि: ' + response.msg);
+                }
+            }).toggleBlockUser(targetMob, action, mob, pin, dId);
+        }
+    }
+    
+    function refreshTehsilData(q = "") { 
+        showP("लोड हो रहा है...");
+        let query = q || document.getElementById('searchValue').value;
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        
+        google.script.run.withSuccessHandler(h => { 
+            if(h === "Security Violation" || h.includes("Unauthorized Area")) return logout();
+            document.getElementById('dataList').innerHTML = h;
+            updateCounts();
+            hideP(); 
+        }).fetchTehsilData(curDist, curTeh, query, mob, pin, dId); 
+    }
+    
+    function decodePinUI() {
+        let row = document.getElementById('fRow').value;
+        let pinInput = document.getElementById('fPin');
+        
+        if(!row) return alert('Error: नया यूज़र है, अभी कोई पिन सेव नहीं है।');
+        if(pinInput.value !== '********') return;
+
+        showP("डिकोड हो रहा है...");
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        
+        google.script.run.withSuccessHandler(res => {
+            hideP();
+            if(res.success) {
+                pinInput.type = "text";
+                pinInput.value = res.pin;
+            } else {
+                alert('त्रुटि: ' + res.msg);
+            }
+        }).revealUserPin(curDist, row, mob, pin, dId);
+    }
+
+    function openForm(r, t) { 
+        showP("फॉर्म लोड हो रहा है..."); 
+        let accessData = { role: activeRole, block: currentBlock }; 
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        
+        google.script.run.withSuccessHandler(h => { 
+            if(h === "Security Violation") return logout();
+            hideP(); 
+            document.getElementById('formFields').innerHTML = h; 
+            document.getElementById('formPage').classList.remove('hidden'); 
+            document.getElementById('dashboard').classList.add('hidden'); 
+            
+            setTimeout(() => { 
+                if(typeof flatpickr !== 'undefined') {
+                    flatpickr(".datepicker", { dateFormat: "d-m-Y", allowInput: true, disableMobile: "true" }); 
+                }
+            }, 100);
+        }).loadForm(curDist, t||curTeh, r, accessData, mob, pin, dId); 
+    }
+
+    function closeForm() { 
+        document.getElementById('formPage').classList.add('hidden'); 
+        document.getElementById('dashboard').classList.remove('hidden'); 
+        if(activeRole === 'admin' || activeRole === 'developer') refreshAdminUsers();
+        else if(currentBlock) openBlockDirectly(curDist, currentBlock);
+        else refreshTehsilData();
+    }
+
+    function saveData() { 
+        let d = {}; 
+        let missing = [];
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        
+        if (activeRole === 'admin' || activeRole === 'developer') {
+            let f1 = document.getElementById('fName').value; 
+            let f2 = document.getElementById('fMob').value; 
+            let f3 = document.getElementById('fPin').value; 
+            let f4 = document.getElementById('fRoll').value;
+            
+            if(!f1) missing.push("Name"); 
+            if(!f2) missing.push("Mobile"); 
+            if(!f3) missing.push("PIN"); 
+            if(!f4) missing.push("Access");
+        } else {
+            let reqs = [
+                {id: 'fName', name: 'नाम'}, {id: 'fRel', name: 'संबंध'}, 
+                {id: 'fBlock', name: 'ब्लॉक'}, {id: 'fMob', name: 'मोबाइल'}, 
+                {id: 'fForm', name: 'फॉर्म नंबर'}, {id: 'fNDate', name: 'नामदान तारीख'}, 
+                {id: 'fStatus', name: 'स्टेटस'}
+            ];
+            reqs.forEach(req => { 
+                let el = document.getElementById(req.id); 
+                if(!el || !el.value.trim()) missing.push(req.name); 
+            });
+        }
+
+        if(missing.length > 0) {
+            alert('अधूरा फॉर्म! कृपया निम्न जानकारी भरें: ' + missing.join(', '));
+            return;
+        }
+
+        document.querySelectorAll('#formFields input, #formFields select, #formFields textarea').forEach(i => { 
+            if(i.id) d[i.id] = i.value; 
+        }); 
+        
+        d.uName = localStorage.getItem('uN'); 
+        
+        if((activeRole === 'admin' || activeRole === 'developer') && d.fPin) {
+            d.fPin = btoa(d.fPin); 
+        }
+
+        showP("सुरक्षित हो रहा है...");
+        google.script.run
+        .withSuccessHandler((res) => { 
+            if(res === "Security Violation") return logout();
+            hideP(); 
+            setTimeout(() => {
+                if(typeof Swal !== 'undefined') {
+                    Swal.fire({ title: 'सफल', text: 'डेटा सुरक्षित हो गया!', icon: 'success', confirmButtonColor: '#0088cc' }).then((result) => {
+                        if (result.isConfirmed) { document.getElementById('searchValue').value = ""; closeForm(); }
+                    });
+                } else {
+                    alert('डेटा सुरक्षित हो गया!');
+                    document.getElementById('searchValue').value = ""; closeForm();
+                }
+            }, 400);
+        })
+        .withFailureHandler(err => { 
+            hideP(); 
+            alert('Error: ' + err.message); 
+        }).saveEntry(curDist, (d.fTeh || ""), d, activeRole, mob, pin, dId); 
+    }
+
+    function deleteRec(r, tn) { 
+        const mob = localStorage.getItem('uM'), pin = getStoredPin(), dId = getDevID();
+        let msg = tn ? "यह रिकॉर्ड हमेशा के लिए हट जाएगा!" : "यूजर डेटा हटा दिया जाएगा!";
+        
+        if(confirm(msg)) { 
+            showP("प्रक्रिया जारी है..."); 
+            google.script.run.withSuccessHandler((serverMsg) => {
+                if(serverMsg === "Security Violation") return logout();
+                hideP();
+                if(serverMsg && serverMsg.includes("Error")) {
+                    alert('त्रुटि: ' + serverMsg);
+                } else {
+                    if(tn) {
+                        document.getElementById('searchValue').value = "";
+                        if(currentBlock) openBlockDirectly(curDist, currentBlock);
+                        else refreshTehsilData();
+                    } else {
+                        refreshAdminUsers();
+                    }
+                }
+            }).killRec(curDist, r, mob, pin, dId, tn); 
+        }
+    }
+
+    function showForgot() {
+        const m = document.getElementById('uMob').value;
+        if(!m) {
+            alert('त्रुटि: पहले अपना मोबाइल या ईमेल डालें!');
+            return;
+        }
+        
+        showP("OTP भेजा जा रहा है...");
+        google.script.run.withSuccessHandler(res => {
+            hideP(); 
+            alert(res.msg);
+            if(res.success) { 
+                document.getElementById('pinField').classList.add('hidden'); 
+                document.getElementById('otpSection').classList.remove('hidden'); 
+            }
+        }).sendOTPEmail(m);
+    }
+
+    function handleReset() {
+        const m = document.getElementById('uMob').value;
+        const otp = document.getElementById('uOTP').value;
+        const rawPin = document.getElementById('newPin').value;
+        
+        if(!otp || !rawPin) {
+            alert('त्रुटि: OTP और नया PIN भरें!');
+            return;
+        }
+        
+        const pin = btoa(rawPin); 
+        showP("पिन रीसेट हो रहा है...");
+        
+        google.script.run.withSuccessHandler(res => {
+            hideP(); 
+            alert(res.msg);
+            if(res.success) { 
+                document.getElementById('otpSection').classList.add('hidden'); 
+                document.getElementById('pinField').classList.remove('hidden'); 
+            }
+        }).verifyAndReset(m, otp, pin);
+    }
+
+    function handleNativeCameraCapture(event) {
+        const file = event.target.files[0]; 
+        if (!file) return; 
+        
+        document.getElementById('ocrCameraModal').style.display = 'flex'; 
+        document.getElementById('ocrResultContainer').classList.add('hidden');
+        
+        const imgContainer = document.getElementById('imgPreviewContainer'); 
+        const imgPreview = document.getElementById('ocrImagePreview'); 
+        const scannerBeam = document.getElementById('scannerBeam'); 
+        
+        imgContainer.style.display = 'block'; 
+        const previewUrl = URL.createObjectURL(file); 
+        imgPreview.src = previewUrl; 
+        
+        document.getElementById('ocrScanningIndicator').classList.remove('hidden'); 
+        scannerBeam.style.display = 'block'; 
+        document.getElementById('cancelOcrBtn').style.display = 'none';
+
+        const mob = localStorage.getItem('uM'); 
+        const pin = getStoredPin(); 
+        const dId = getDevID();
+
+        const img = new Image(); 
+        img.onload = function() {
+            const canvas = document.createElement('canvas'); 
+            const MAX_WIDTH = 1200; 
+            let scaleSize = 1; 
+            if(img.width > MAX_WIDTH) { 
+                scaleSize = MAX_WIDTH / img.width; 
+            } 
+            canvas.width = img.width * scaleSize; 
+            canvas.height = img.height * scaleSize;
+
+            const ctx = canvas.getContext('2d'); 
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8); 
+            const base64Data = compressedDataUrl.split(',')[1];
+
+            google.script.run.withSuccessHandler(function(text) {
+                document.getElementById('ocrScanningIndicator').classList.add('hidden'); 
+                scannerBeam.style.display = 'none'; 
+                document.getElementById('cancelOcrBtn').style.display = 'inline-block';
+                
+                if(text && text.includes("Error:")) { 
+                    alert('स्कैनर एरर: ' + text); 
+                    closeOCRScanner(); 
+                } else {
+                    document.getElementById('ocrResultContainer').classList.remove('hidden');
+                    
+                    let rawLines = text.split(/[\r\n]+/); 
+                    let validLines = [];
+                    
+                    for (let i = 0; i < rawLines.length; i++) { 
+                        let l = rawLines[i].trim(); 
+                        let lower = l.toLowerCase(); 
+                        if (lower === "date" || lower === "page" || lower === "poge" || lower === "date:" || lower === "page:") continue; 
+                        if (/^[0-9]+[.]?$/.test(l) && i < 4) continue; 
+                        
+                        l = l.replace(/\b(date|page|poge)[ \t:.\-_]*(\d{1,2}[/-]\d{1,2}[/-]\d{2,4}|\d+)?\b/gi, ''); 
+                        l = l.trim(); 
+                        if (l.length > 0) validLines.push(l); 
+                    }
+                    
+                    let mergedLines = []; 
+                    for (let i = 0; i < validLines.length; i++) { 
+                        let currentLine = validLines[i]; 
+                        while (i < validLines.length - 1 && currentLine.match(/(मे|में|से|पर|को|की|के|गए|गये|-)$/)) { 
+                            currentLine += " " + validLines[i+1]; 
+                            i++; 
+                        } 
+                        mergedLines.push(currentLine); 
+                    }
+                    
+                    let finalText = mergedLines.join('\n'); 
+                    finalText = finalText.replace(/\s+(कुल|फुल)/g, '\n$1'); 
+                    document.getElementById('ocrTextResult').value = finalText.trim();
+                }
+                document.getElementById('ocrNativeCamera').value = ""; 
+                document.getElementById('ocrNativeGallery').value = "";
+            }).withFailureHandler(function(err) {
+                document.getElementById('ocrScanningIndicator').classList.add('hidden'); 
+                document.getElementById('scannerBeam').style.display = 'none'; 
+                document.getElementById('cancelOcrBtn').style.display = 'inline-block'; 
+                alert('स्कैनर एरर: ' + err.message); 
+                closeOCRScanner(); 
+                document.getElementById('ocrNativeCamera').value = ""; 
+                document.getElementById('ocrNativeGallery').value = "";
+            }).processImageWithGoogleVision(base64Data, 'image/jpeg', mob, pin, dId); 
+        }; 
+        img.src = previewUrl;
+    }
+
+    function closeOCRScanner() { 
+        document.getElementById('ocrCameraModal').style.display = 'none'; 
+        document.getElementById('imgPreviewContainer').style.display = 'none'; 
+        document.getElementById('ocrImagePreview').src = ""; 
+        document.getElementById('ocrScanningIndicator').classList.add('hidden'); 
+        document.getElementById('scannerBeam').style.display = 'none'; 
+        document.getElementById('cancelOcrBtn').style.display = 'inline-block'; 
+    }
+
+    function applyOCRText() { 
+        const scannedText = document.getElementById('ocrTextResult').value; 
+        const targetInput = document.getElementById('fCall'); 
+        if (targetInput) { targetInput.value = scannedText; } 
+        closeOCRScanner(); 
+    }
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW setup failed:', err));
+        });
+    }
+  </script>
+</body>
+</html>
+                        return function(...args) {
+                            const currentSuccess = successHandler;
+                            const currentFailure = failureHandler;
+                            successHandler = null; failureHandler = null;
+                            
+                            fetch(API_URL, {
+                                method: 'POST',
+                                body: JSON.stringify({ action: prop, args: args }),
+                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                redirect: 'follow'
+                            })
+                            .then(res => res.text()) 
+                            .then(text => {
+                                let data;
+                                try {
+                                    data = JSON.parse(text);
+                                } catch(e) {
+                                    throw new Error("सर्वर से गलत जवाब मिला: " + text.substring(0, 80));
+                                }
+                                
+                                if (data.error && currentFailure) { 
+                                    currentFailure(new Error(data.error)); 
+                                } else if (data.error) {
+                                    throw new Error(data.error);
+                                } else if (currentSuccess) { 
+                                    currentSuccess(data.result); 
+                                }
+                            })
+                            .catch(err => {
+                                if (currentFailure) {
+                                    currentFailure(err); 
+                                } else {
+                                    console.error("API Error:", err);
+                                    if(typeof hideP === 'function') hideP();
+                                    alert("कनेक्शन एरर: " + err.message);
+                                }
+                            });
+                        }
+                    }
+                });
+            })()
+        }
+    };
+  </script>
+
+  <!-- Loader & OCR Modals -->
+  <div id="loaderOverlay"><div class="spinner"></div><p id="loaderText">लोड हो रहा है...</p></div>
+
+  <input type="file" id="ocrNativeCamera" accept="image/*" capture="environment" style="display: none;" onchange="handleNativeCameraCapture(event)">
+  <input type="file" id="ocrNativeGallery" accept="image/*" style="display: none;" onchange="handleNativeCameraCapture(event)">
+
+  <div id="ocrCameraModal" class="ocr-modal">
+    <div class="ocr-modal-content">
+      <h3 style="color:#0088cc; margin-top:0;">📝 टेक्स्ट स्कैनर रिज़ल्ट</h3>
+      <div id="imgPreviewContainer" class="img-preview-container">
+         <img id="ocrImagePreview" class="img-preview" />
+         <div id="scannerBeam" class="scanner-beam"></div>
+      </div>
+      <div id="ocrScanningIndicator" class="hidden" style="color: #0088cc; font-weight: bold; margin: 10px 0;">
+        <div class="ocr-local-spinner"></div>
+        <span style="font-size: 14px;">🔍 टेक्स्ट स्कैन हो रहा है, कृपया प्रतीक्षा करें...</span>
+      </div>
+      <div id="ocrResultContainer" class="hidden">
+        <label style="margin: 10px 0 2px 0;">स्कैन किया गया टेक्स्ट (सुधार करें):</label>
+        <textarea id="ocrTextResult" class="ocr-preview-box"></textarea>
+        <div class="ocr-btn-group">
+          <button onclick="applyOCRText()" style="background:#0088cc; color:white;">✅ अप्लाई करें</button>
+          <button onclick="document.getElementById('ocrNativeCamera').click()" style="background:#ff9800; color:white;">🔄 फिर से लें</button>
+        </div>
+      </div>
+      <button id="cancelOcrBtn" onclick="closeOCRScanner()" style="background:#95a5a6; color:white; margin-top:15px;">रद्द करें</button>
+    </div>
+  </div>
+
   <!-- ✅ ALL HTML CONTAINERS (RESTORED) -->
   <div id="loginChoice" class="container" style="margin-top:80px;">
     <div class="card">
