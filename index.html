@@ -8,6 +8,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Mirzapur Mandal App</title>
   
+  <!-- ✅ PWA INSTALLATION TAGS (ADDED BACK) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -88,9 +92,7 @@
 </head>
 <body onload="checkAuth()">
 
-  <!-- 🟢 MAGIC PROXY: Converts all google.script.run calls to fetch API -->
   <script>
-    // Aapka Naya Web App URL yahan set kar diya gaya hai
     const API_URL = "https://script.google.com/macros/s/AKfycbyzVAkFgZYtjW_CWxysdovKBpZizvg998DYog-0EJXN6uvU_1_RDmvYUcPmVuEphPk4/exec";
     
     window.google = {
@@ -1007,6 +1009,13 @@
          targetInput.value = scannedText;
       }
       closeOCRScanner();
+    }
+    
+    // ✅ PWA SERVICE WORKER REGISTRATION (ADDED BACK)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW setup failed:', err));
+        });
     }
   </script>
 </body>
